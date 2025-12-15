@@ -20,7 +20,7 @@ public class DepartmentHandler(ApplicationDbContext context, IAuditService audit
     public async Task<Department?> GetByIdAsync(Guid id)
     {
         return await context.Departments
-            .Include(d => d.HeadOffice)
+            .Include(d => d.BranchOffice)
             .Include(d => d.Employees)
             .FirstOrDefaultAsync(d => d.Id == id);
     }
@@ -28,7 +28,7 @@ public class DepartmentHandler(ApplicationDbContext context, IAuditService audit
     public async Task<IEnumerable<Department>> GetAllAsync(DepartmentFilterRequest filter)
     {
         var query = context.Departments
-            .Include(d => d.HeadOffice)
+            .Include(d => d.BranchOffice)
             .AsNoTracking()
             .AsQueryable();
 
@@ -39,9 +39,9 @@ public class DepartmentHandler(ApplicationDbContext context, IAuditService audit
                 d.Description.Contains(filter.SearchTerm));
         }
 
-        if (filter.HeadOfficeId.HasValue)
+        if (filter.BranchOfficeId.HasValue)
         {
-            query = query.Where(d => d.HeadOfficeId == filter.HeadOfficeId.Value);
+            query = query.Where(d => d.BranchOfficeId == filter.BranchOfficeId.Value);
         }
 
         return await query
@@ -57,7 +57,7 @@ public class DepartmentHandler(ApplicationDbContext context, IAuditService audit
         {
             Name = request.Name,
             Description = request.Description,
-            HeadOfficeId = request.HeadOfficeId,
+            BranchOfficeId = request.BranchOfficeId,
             ManagerId = request.ManagerId,
             CreatedAt = DateTime.UtcNow
         };
@@ -80,7 +80,7 @@ public class DepartmentHandler(ApplicationDbContext context, IAuditService audit
 
         department.Name = request.Name;
         department.Description = request.Description;
-        department.HeadOfficeId = request.HeadOfficeId;
+        department.BranchOfficeId = request.BranchOfficeId;
         department.ManagerId = request.ManagerId;
         department.UpdatedAt = DateTime.UtcNow;
 

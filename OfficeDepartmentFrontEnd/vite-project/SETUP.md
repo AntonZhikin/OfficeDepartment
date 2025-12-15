@@ -59,3 +59,5 @@ src/
 └── types/            # Все TypeScript типы
 ```
 
+
+

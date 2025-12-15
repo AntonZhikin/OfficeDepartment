@@ -83,7 +83,6 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-builder.Services.AddScoped<IHeadOfficeHandler, HeadOfficeHandler>();
 builder.Services.AddScoped<IBranchOfficeHandler, BranchOfficeHandler>();
 builder.Services.AddScoped<IOfficeTaskHandler, OfficeTaskHandler>();
 builder.Services.AddScoped<IEmployeeHandler, EmployeeHandler>();

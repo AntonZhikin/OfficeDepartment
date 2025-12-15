@@ -22,6 +22,7 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
     {
         return await context.OfficeTasks
             .Include(t => t.BranchOffice)
+            .Include(t => t.Department)
             .Include(t => t.AssignedEmployee)
             .FirstOrDefaultAsync(t => t.Id == id);
     }
@@ -30,6 +31,7 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
     {
         var query = context.OfficeTasks
             .Include(t => t.BranchOffice)
+            .Include(t => t.Department)
             .Include(t => t.AssignedEmployee)
             .AsNoTracking()
             .AsQueryable();
@@ -76,6 +78,7 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
             Description = request.Description,
             Priority = request.Priority,
             BranchOfficeId = request.BranchOfficeId,
+            DepartmentId = request.DepartmentId,
             AssignedEmployeeId = request.AssignedEmployeeId,
             DueDate = request.DueDate.HasValue 
                 ? (request.DueDate.Value.Kind == DateTimeKind.Utc 
@@ -91,8 +94,23 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
         context.OfficeTasks.Add(task);
         await context.SaveChangesAsync();
 
+        // Сериализуем только нужные поля без навигационных свойств
+        var taskData = new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            task.Status,
+            task.Priority,
+            task.BranchOfficeId,
+            task.DepartmentId,
+            task.AssignedEmployeeId,
+            task.DueDate,
+            task.CreatedAt
+        };
+
         await auditService.LogActionAsync("Create", "OfficeTask", task.Id, userId, null,
-            System.Text.Json.JsonSerializer.Serialize(task), ipAddress);
+            System.Text.Json.JsonSerializer.Serialize(taskData), ipAddress);
 
         return task;
     }
@@ -102,13 +120,28 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
         var task = await context.OfficeTasks.FindAsync(id);
         if (task == null) return null;
 
-        var oldValues = System.Text.Json.JsonSerializer.Serialize(task);
+        var oldValues = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            task.Status,
+            task.Priority,
+            task.BranchOfficeId,
+            task.DepartmentId,
+            task.AssignedEmployeeId,
+            task.DueDate,
+            task.CreatedAt,
+            task.UpdatedAt,
+            task.CompletedAt
+        });
 
         task.Title = request.Title;
         task.Description = request.Description;
         task.Status = request.Status;
         task.Priority = request.Priority;
         task.BranchOfficeId = request.BranchOfficeId;
+        task.DepartmentId = request.DepartmentId;
         task.AssignedEmployeeId = request.AssignedEmployeeId;
         task.DueDate = request.DueDate.HasValue 
             ? (request.DueDate.Value.Kind == DateTimeKind.Utc 
@@ -126,7 +159,22 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
 
         await context.SaveChangesAsync();
 
-        var newValues = System.Text.Json.JsonSerializer.Serialize(task);
+        var newValues = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            task.Status,
+            task.Priority,
+            task.BranchOfficeId,
+            task.DepartmentId,
+            task.AssignedEmployeeId,
+            task.DueDate,
+            task.CreatedAt,
+            task.UpdatedAt,
+            task.CompletedAt
+        });
+        
         await auditService.LogActionAsync("Update", "OfficeTask", task.Id, userId, oldValues, newValues, ipAddress);
 
         return task;
@@ -137,7 +185,22 @@ public class OfficeTaskHandler(ApplicationDbContext context, IAuditService audit
         var task = await context.OfficeTasks.FindAsync(id);
         if (task == null) return false;
 
-        var oldValues = System.Text.Json.JsonSerializer.Serialize(task);
+        var oldValues = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            task.Status,
+            task.Priority,
+            task.BranchOfficeId,
+            task.DepartmentId,
+            task.AssignedEmployeeId,
+            task.DueDate,
+            task.CreatedAt,
+            task.UpdatedAt,
+            task.CompletedAt
+        });
+        
         context.OfficeTasks.Remove(task);
         await context.SaveChangesAsync();
 

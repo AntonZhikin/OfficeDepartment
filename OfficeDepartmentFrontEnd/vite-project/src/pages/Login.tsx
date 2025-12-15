@@ -1,5 +1,6 @@
+import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const Login = () => {
@@ -18,8 +19,12 @@ export const Login = () => {
     try {
       await login(username, password);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Ошибка входа');
+    } catch (err: unknown) {
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Ошибка входа');
+      } else {
+        setError('Ошибка входа');
+      }
     } finally {
       setLoading(false);
     }
@@ -82,11 +87,6 @@ export const Login = () => {
             </button>
           </div>
 
-          <div className="text-center">
-            <Link to="/register" className="text-sm text-indigo-600 hover:text-indigo-500">
-              Нет аккаунта? Зарегистрироваться
-            </Link>
-          </div>
         </form>
       </div>
     </div>

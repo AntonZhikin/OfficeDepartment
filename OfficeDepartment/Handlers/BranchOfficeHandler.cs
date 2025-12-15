@@ -20,7 +20,7 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
     public async Task<BranchOffice?> GetByIdAsync(Guid id)
     {
         return await context.BranchOffices
-            .Include(b => b.HeadOffice)
+            .Include(b => b.Departments)
             .Include(b => b.Tasks)
             .Include(b => b.Employees)
             .FirstOrDefaultAsync(b => b.Id == id);
@@ -29,7 +29,7 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
     public async Task<IEnumerable<BranchOffice>> GetAllAsync(BranchOfficeFilterRequest filter)
     {
         var query = context.BranchOffices
-            .Include(b => b.HeadOffice)
+            .Include(b => b.Departments)
             .AsNoTracking()
             .AsQueryable();
 
@@ -38,11 +38,6 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
             query = query.Where(b => 
                 b.Name.Contains(filter.SearchTerm) ||
                 b.City.Contains(filter.SearchTerm));
-        }
-
-        if (filter.HeadOfficeId.HasValue)
-        {
-            query = query.Where(b => b.HeadOfficeId == filter.HeadOfficeId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.City))
@@ -59,15 +54,6 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
 
     public async Task<BranchOffice> CreateAsync(CreateBranchOfficeRequest request, Guid? userId, string? ipAddress)
     {
-        // Проверяем существование HeadOffice
-        var headOfficeExists = await context.HeadOffices
-            .AnyAsync(h => h.Id == request.HeadOfficeId);
-        
-        if (!headOfficeExists)
-        {
-            throw new InvalidOperationException($"HeadOffice with ID {request.HeadOfficeId} does not exist.");
-        }
-
         var branchOffice = new BranchOffice
         {
             Name = request.Name,
@@ -76,7 +62,6 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
             Country = request.Country,
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
-            HeadOfficeId = request.HeadOfficeId,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -94,15 +79,6 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
         var branchOffice = await context.BranchOffices.FindAsync(id);
         if (branchOffice == null) return null;
 
-        // Проверяем существование HeadOffice
-        var headOfficeExists = await context.HeadOffices
-            .AnyAsync(h => h.Id == request.HeadOfficeId);
-        
-        if (!headOfficeExists)
-        {
-            throw new InvalidOperationException($"HeadOffice with ID {request.HeadOfficeId} does not exist.");
-        }
-
         var oldValues = System.Text.Json.JsonSerializer.Serialize(branchOffice);
 
         branchOffice.Name = request.Name;
@@ -111,7 +87,6 @@ public class BranchOfficeHandler(ApplicationDbContext context, IAuditService aud
         branchOffice.Country = request.Country;
         branchOffice.PhoneNumber = request.PhoneNumber;
         branchOffice.Email = request.Email;
-        branchOffice.HeadOfficeId = request.HeadOfficeId;
         branchOffice.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();

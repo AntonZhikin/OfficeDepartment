@@ -5,7 +5,6 @@ namespace OfficeDepartment.Infrastructure.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public DbSet<HeadOffice> HeadOffices { get; init; }
     public DbSet<BranchOffice> BranchOffices { get; init; }
     public DbSet<OfficeTask> OfficeTasks { get; init; }
     public DbSet<Employee> Employees { get; init; }
@@ -17,18 +16,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(modelBuilder);
 
-        // HeadOffice configuration
-        modelBuilder.Entity<HeadOffice>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Address).IsRequired().HasMaxLength(500);
-            entity.Property(e => e.City).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Country).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Email).HasMaxLength(200);
-            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
-        });
-
         // BranchOffice configuration
         modelBuilder.Entity<BranchOffice>(entity =>
         {
@@ -39,11 +26,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Country).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(200);
             entity.Property(e => e.PhoneNumber).HasMaxLength(50);
-            
-            entity.HasOne(e => e.HeadOffice)
-                .WithMany(h => h.BranchOffices)
-                .HasForeignKey(e => e.HeadOfficeId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // OfficeTask configuration
@@ -56,6 +38,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.HasOne(e => e.BranchOffice)
                 .WithMany(b => b.Tasks)
                 .HasForeignKey(e => e.BranchOfficeId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasOne(e => e.Department)
+                .WithMany()
+                .HasForeignKey(e => e.DepartmentId)
                 .OnDelete(DeleteBehavior.SetNull);
             
             entity.HasOne(e => e.AssignedEmployee)
@@ -83,6 +70,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .WithMany(d => d.Employees)
                 .HasForeignKey(e => e.DepartmentId)
                 .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.Employees)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Department configuration
@@ -92,9 +84,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(1000);
             
-            entity.HasOne(e => e.HeadOffice)
-                .WithMany(h => h.Departments)
-                .HasForeignKey(e => e.HeadOfficeId)
+            entity.HasOne(e => e.BranchOffice)
+                .WithMany(b => b.Departments)
+                .HasForeignKey(e => e.BranchOfficeId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -120,4 +112,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         });
     }
 }
+
 

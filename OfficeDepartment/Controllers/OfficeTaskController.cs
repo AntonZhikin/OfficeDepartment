@@ -29,6 +29,7 @@ public class OfficeTaskController(IOfficeTaskHandler handler) : BaseController
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateOfficeTaskRequest request)
     {
         var userId = GetUserId();

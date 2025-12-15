@@ -10,5 +10,7 @@ public class User
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; init; }
     public DateTime? LastLoginAt { get; set; }
+    
+    public ICollection<Employee> Employees { get; init; } = new List<Employee>();
 }
 

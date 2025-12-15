@@ -9,11 +9,10 @@ public class BranchOffice
     public string Country { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public Guid HeadOfficeId { get; set; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     
-    public HeadOffice HeadOffice { get; init; } = null!;
+    public ICollection<Department> Departments { get; init; } = new List<Department>();
     public ICollection<OfficeTask> Tasks { get; init; } = new List<OfficeTask>();
     public ICollection<Employee> Employees { get; init; } = new List<Employee>();
 }

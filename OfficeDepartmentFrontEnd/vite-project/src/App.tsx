@@ -1,13 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Dashboard } from './pages/Dashboard';
-import { HeadOffices } from './pages/HeadOffices';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { BranchOffices } from './pages/BranchOffices';
-import { Employees } from './pages/Employees';
+import { Dashboard } from './pages/Dashboard';
 import { Departments } from './pages/Departments';
+import { Employees } from './pages/Employees';
+import { Login } from './pages/Login';
 import { Tasks } from './pages/Tasks';
 
 function AppRoutes() {
@@ -20,22 +18,10 @@ function AppRoutes() {
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />}
       />
       <Route
-        path="/register"
-        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />}
-      />
-      <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/head-offices"
-        element={
-          <ProtectedRoute>
-            <HeadOffices />
           </ProtectedRoute>
         }
       />

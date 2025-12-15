@@ -10,6 +10,8 @@ public class CreateEmployeeRequest
     public Guid? BranchOfficeId { get; set; }
     public Guid? DepartmentId { get; set; }
     public DateTime HireDate { get; set; } = DateTime.UtcNow;
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }
 
 public class UpdateEmployeeRequest

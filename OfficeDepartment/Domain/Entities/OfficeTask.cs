@@ -8,6 +8,7 @@ public class OfficeTask
     public TaskStatus Status { get; set; } = TaskStatus.Pending;
     public TaskPriority Priority { get; set; } = TaskPriority.Medium;
     public Guid? BranchOfficeId { get; set; }
+    public Guid? DepartmentId { get; set; }
     public Guid? AssignedEmployeeId { get; set; }
     public DateTime? DueDate { get; set; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
@@ -16,6 +17,7 @@ public class OfficeTask
     
 
     public BranchOffice? BranchOffice { get; init; }
+    public Department? Department { get; init; }
     public Employee? AssignedEmployee { get; init; }
 }
 

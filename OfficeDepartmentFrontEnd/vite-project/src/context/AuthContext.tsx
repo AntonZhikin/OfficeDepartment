@@ -5,7 +5,6 @@ import { authService } from '../api/authService';
 interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -30,10 +29,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(response.user);
   };
 
-  const register = async (username: string, email: string, password: string) => {
-    await authService.register({ username, email, password });
-  };
-
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -45,7 +40,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         login,
-        register,
         logout,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'Admin',
@@ -63,4 +57,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
 

@@ -32,38 +32,24 @@ public class BranchOfficeController(IBranchOfficeHandler handler) : BaseControll
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateBranchOfficeRequest request)
     {
-        try
-        {
-            var userId = GetUserId();
-            var ipAddress = GetIpAddress();
-            var branchOffice = await handler.CreateAsync(request, userId, ipAddress);
-            return CreatedAtAction(nameof(GetById), new { id = branchOffice.Id }, branchOffice);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var userId = GetUserId();
+        var ipAddress = GetIpAddress();
+        var branchOffice = await handler.CreateAsync(request, userId, ipAddress);
+        return CreatedAtAction(nameof(GetById), new { id = branchOffice.Id }, branchOffice);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBranchOfficeRequest request)
     {
-        try
+        var userId = GetUserId();
+        var ipAddress = GetIpAddress();
+        var branchOffice = await handler.UpdateAsync(id, request, userId, ipAddress);
+        if (branchOffice == null)
         {
-            var userId = GetUserId();
-            var ipAddress = GetIpAddress();
-            var branchOffice = await handler.UpdateAsync(id, request, userId, ipAddress);
-            if (branchOffice == null)
-            {
-                return NotFound();
-            }
-            return Ok(branchOffice);
+            return NotFound();
         }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        return Ok(branchOffice);
     }
 
     [HttpDelete("{id}")]

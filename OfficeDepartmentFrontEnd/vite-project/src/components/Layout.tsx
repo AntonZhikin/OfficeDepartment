@@ -31,16 +31,10 @@ export const Layout = ({ children }: LayoutProps) => {
                   Панель управления
                 </Link>
                 <Link
-                  to="/head-offices"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Главные офисы
-                </Link>
-                <Link
                   to="/branch-offices"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
-                  Дочерние офисы
+                  Офисы
                 </Link>
                 <Link
                   to="/employees"

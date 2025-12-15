@@ -9,6 +9,7 @@ public class CreateOfficeTaskRequest
     public string Description { get; set; } = string.Empty;
     public TaskPriority Priority { get; set; } = TaskPriority.Medium;
     public Guid? BranchOfficeId { get; set; }
+    public Guid? DepartmentId { get; set; }
     public Guid? AssignedEmployeeId { get; set; }
     public DateTime? DueDate { get; set; }
 }
@@ -20,6 +21,7 @@ public class UpdateOfficeTaskRequest
     public TaskStatus Status { get; set; }
     public TaskPriority Priority { get; set; }
     public Guid? BranchOfficeId { get; set; }
+    public Guid? DepartmentId { get; set; }
     public Guid? AssignedEmployeeId { get; set; }
     public DateTime? DueDate { get; set; }
 }

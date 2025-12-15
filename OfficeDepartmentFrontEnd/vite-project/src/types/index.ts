@@ -3,18 +3,12 @@ export interface User {
   username: string;
   email: string;
   role: string;
-}
-
-export interface HeadOffice {
-  id: string;
-  name: string;
-  address: string;
-  city: string;
-  country: string;
-  phoneNumber: string;
-  email: string;
-  createdAt: string;
-  updatedAt?: string;
+  employee?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    position: string;
+  };
 }
 
 export interface BranchOffice {
@@ -25,10 +19,8 @@ export interface BranchOffice {
   country: string;
   phoneNumber: string;
   email: string;
-  headOfficeId: string;
   createdAt: string;
   updatedAt?: string;
-  headOffice?: HeadOffice;
 }
 
 export interface Employee {
@@ -51,11 +43,11 @@ export interface Department {
   id: string;
   name: string;
   description: string;
-  headOfficeId: string;
+  branchOfficeId: string;
   managerId?: string;
   createdAt: string;
   updatedAt?: string;
-  headOffice?: HeadOffice;
+  branchOffice?: BranchOffice;
 }
 
 export enum TaskStatus {
@@ -79,12 +71,14 @@ export interface OfficeTask {
   status: TaskStatus;
   priority: TaskPriority;
   branchOfficeId?: string;
+  departmentId?: string;
   assignedEmployeeId?: string;
   dueDate?: string;
   createdAt: string;
   updatedAt?: string;
   completedAt?: string;
   branchOffice?: BranchOffice;
+  department?: Department;
   assignedEmployee?: Employee;
 }
 
@@ -93,14 +87,9 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-}
-
 export interface AuthResponse {
   token: string;
   user: User;
 }
+
 
